@@ -1,0 +1,61 @@
+-- AI Study Assistant database
+-- phpMyAdmin > Import tab > choose this file > Go
+CREATE DATABASE IF NOT EXISTS study_assistant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE study_assistant;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL DEFAULT 1,
+  file_name VARCHAR(255) NOT NULL,
+  stored_name VARCHAR(100) NOT NULL,
+  file_size INT NOT NULL,
+  page_count INT NOT NULL DEFAULT 0,
+  status VARCHAR(30) NOT NULL DEFAULT 'Uploaded',
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX (user_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS document_pages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  document_id INT NOT NULL,
+  page_number INT NOT NULL,
+  text_content MEDIUMTEXT,
+  FULLTEXT KEY ft_text (text_content),
+  FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS chats (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL DEFAULT 1,
+  document_id INT NULL,
+  title VARCHAR(200) NOT NULL DEFAULT 'New chat',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  chat_id INT NOT NULL,
+  role ENUM('user','ai') NOT NULL,
+  content TEXT NOT NULL,
+  page_refs VARCHAR(100) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS notes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL DEFAULT 1,
+  document_id INT NULL,
+  title VARCHAR(200) NOT NULL,
+  content MEDIUMTEXT NOT NULL,
+  type ENUM('summary','notes','quiz') NOT NULL DEFAULT 'notes',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;

@@ -1,0 +1,2 @@
+# Nobody can open uploaded files directly from the browser
+Require all denied

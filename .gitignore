@@ -1,0 +1,16 @@
+# Secrets (database password, API key) - never upload
+includes/config.local.php
+includes/secrets.php
+
+# User-uploaded PDFs (keep only the .htaccess protection file)
+uploads/*
+!uploads/.htaccess
+
+# Composer packages (install with: composer install)
+vendor/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
